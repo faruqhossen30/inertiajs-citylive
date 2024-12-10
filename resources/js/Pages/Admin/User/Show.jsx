@@ -1,7 +1,7 @@
 import BreadcumComponent from '@/Components/Dashboard/BreadcumComponent'
 import { db } from '@/firebase'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { CogIcon, EyeIcon, PencilIcon, PlusCircleIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { CogIcon, DevicePhoneMobileIcon, EyeIcon, PencilIcon, PlusCircleIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import { collection, doc, getDoc, getDocs, serverTimestamp, Timestamp, updateDoc } from 'firebase/firestore'
 import React, { useState } from 'react'
@@ -143,18 +143,21 @@ const Show = () => {
                     <DescriptionTerm>Level</DescriptionTerm>
                     <DescriptionDetails>{user.level}</DescriptionDetails>
 
-                    {/* <DescriptionTerm>Host - { }</DescriptionTerm>
+                    <DescriptionTerm>Device Block</DescriptionTerm>
                     <DescriptionDetails>
-                        {user.isHost ?
-                            <button onClick={() => removeFromHost()} className="border flex space-x-2 px-2 py-1 border-red-400 rounded text-red-400 hover:text-green-400 hover:border-green-400">
-                                <XMarkIcon className="text-red-400 w-6 hover:text-green-400" /> <span>Remove From Host {user.isHost}</span>
-                            </button>
+                        {user.deviceBlock ?
+                            <Link href={route('admin.user.deviceblocktoggle', user.uid)} method="post" as="button" className="flex text-red-500 items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
+                                <DevicePhoneMobileIcon className="w-4 h-4" />
+                                <span>Device Unblock</span>
+                            </Link>
 
-                            : <button onClick={() => setToHost()} className="border flex space-x-2 px-2 py-1 border-red-400 rounded text-red-400 hover:text-green-400 hover:border-green-400">
-                                <PlusCircleIcon className="text-red-400 w-6 hover:text-green-400" /> <span>Set to Host {user.isHost}</span>
-                            </button>
+                            : <Link href={route('admin.user.deviceblocktoggle', user.uid)} method="post" as="button" className="flex text-red-500 items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
+                                <DevicePhoneMobileIcon className="w-4 h-4" />
+                                <span>Device Block</span>
+                            </Link>
+
                         }
-                    </DescriptionDetails> */}
+                    </DescriptionDetails>
 
                     <DescriptionTerm>Agent</DescriptionTerm>
                     <DescriptionDetails>
@@ -178,6 +181,39 @@ const Show = () => {
                                 : <Link href={route('admin.topups.add', user.uid)} method='post' as='button' className="border flex space-x-2 px-2 py-1 border-red-400 rounded text-red-400 hover:text-green-400 hover:border-green-400">
                                     <PlusCircleIcon className="text-red-400 w-6 hover:text-green-400" /> <span>Add to TopUP {user.isHost}</span>
                                 </Link>
+                        }
+                    </DescriptionDetails>
+
+
+                    <DescriptionTerm>VIP</DescriptionTerm>
+                    <DescriptionDetails>
+                        {user.vip ?
+                            <Link href={route('admin.user.viptoggle', user.uid)} method="post" as="button" className="flex text-red-500 items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
+                                <XMarkIcon className="w-4 h-4" />
+                                <span>Remove VIP</span>
+                            </Link>
+
+                            : <Link href={route('admin.user.viptoggle', user.uid)} method="post" as="button" className="flex text-red-500 items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
+                                <PlusIcon className="w-4 h-4" />
+                                <span>Add VIP</span>
+                            </Link>
+
+                        }
+                    </DescriptionDetails>
+
+                    <DescriptionTerm>VVIP</DescriptionTerm>
+                    <DescriptionDetails>
+                        {user.vip ?
+                            <Link href={route('admin.user.vviptoggle', user.uid)} method="post" as="button" className="flex text-red-500 items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
+                                <XMarkIcon className="w-4 h-4" />
+                                <span>Remove VVIP</span>
+                            </Link>
+
+                            : <Link href={route('admin.user.vviptoggle', user.uid)} method="post" as="button" className="flex text-red-500 items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
+                                <PlusIcon className="w-4 h-4" />
+                                <span>Add VVIP</span>
+                            </Link>
+
                         }
                     </DescriptionDetails>
 

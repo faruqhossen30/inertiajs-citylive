@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\HostController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\Admin\TopupController;
+use App\Http\Controllers\Admin\TransctionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VideoLiveController;
 use App\Http\Controllers\Admin\WallpeperController;
@@ -34,6 +35,10 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('admin.users');
         Route::post('/disable/{uid}', [UserController::class, 'disableAccount'])->name('admin.user.disable');
+        Route::post('/deviceblock/{uid}', [UserController::class, 'diviceBlockToggle'])->name('admin.user.deviceblocktoggle');
+        Route::post('/togglediamondlock/{uid}', [UserController::class, 'toggleDiamondLock'])->name('admin.user.diamondtogglelock');
+        Route::post('/vip/{uid}', [UserController::class, 'vipToggle'])->name('admin.user.viptoggle');
+        Route::post('/vvip/{uid}', [UserController::class, 'vvipToggle'])->name('admin.user.vviptoggle');
     });
 
     Route::prefix('agents')->group(function () {
@@ -48,6 +53,10 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::post('/removetopup/{uid}', [TopupController::class, 'removeTopUp'])->name('admin.topups.remove');
         Route::get('{uid}/deposit/topup', [DepositController::class, 'createTopup'])->name('admin.topup.deposit');
         Route::post('{uid}/deposit/topup', [DepositController::class, 'storeTopup'])->name('admin.topup.deposit.store');
+    });
+
+    Route::prefix('transctions')->group(function () {
+        Route::get('/', [TransctionController::class, 'todaySendTransction'])->name('admin.transction.todaysend');
     });
 
     // Users

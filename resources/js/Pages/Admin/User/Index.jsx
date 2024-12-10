@@ -1,9 +1,9 @@
 import BreadcumComponent from '@/Components/Dashboard/BreadcumComponent'
 import { db } from '@/firebase'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { CogIcon, EyeIcon, GiftIcon, LockClosedIcon, PencilIcon } from '@heroicons/react/24/outline'
+import { CogIcon, EyeIcon, GiftIcon, LockClosedIcon, PencilIcon, UserIcon } from '@heroicons/react/24/outline'
 import { Head, Link } from '@inertiajs/react'
-import { collection, getDocs,orderBy } from 'firebase/firestore'
+import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
@@ -15,7 +15,11 @@ const Index = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(db, "users"));
+            // const querySnapshot = await getDocs(collection(db, "users"));
+            const collectionRef = collection(db, "users");
+            const q = query(collectionRef,orderBy("id", "asc"));
+            const querySnapshot = await getDocs(q);
+
             const items = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
@@ -48,6 +52,7 @@ const Index = () => {
                                         <TableHeader>S.N</TableHeader>
                                         <TableHeader>Photo</TableHeader>
                                         <TableHeader>Title</TableHeader>
+                                        <TableHeader>Name</TableHeader>
                                         <TableHeader>Roll</TableHeader>
                                         <TableHeader>Action</TableHeader>
                                     </TableRow>
@@ -55,16 +60,18 @@ const Index = () => {
                                 <TableBody>
                                     {users.map((user, index) => (
                                         <TableRow key={index}>
-                                            <TableCell className="font-medium">{index+1}</TableCell>
+                                            <TableCell className="font-medium">{index + 1}</TableCell>
                                             <TableCell className="font-medium">
                                                 <img src={user.photoURL} alt="photo" className="h-10 rounded border" />
                                             </TableCell>
+                                            <TableCell className="font-medium">{user.id}</TableCell>
                                             <TableCell className="font-medium">{user.name}</TableCell>
                                             <TableCell className="text-zinc-500">
                                                 <div className="py-2 space-x-2">
                                                     {user.host && <Badge color="lime">Host</Badge>}
                                                     {user.agent && <Badge color="purple">Agent</Badge>}
                                                     {user.topup && <Badge color="green">TopUp</Badge>}
+                                                    {user.deviceBlock && <Badge color="red">Device Blocked</Badge>}
                                                 </div>
 
                                             </TableCell>
@@ -74,20 +81,29 @@ const Index = () => {
                                                 </Link> */}
                                                 {(user.status || user.status == null) &&
                                                     <Link href={route('admin.user.disable', user.uid)} method="post" as="button" className="flex text-red-500 items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
-                                                    <LockClosedIcon className="w-4 h-4" />
-                                                    <span>Disable</span>
-                                                </Link>
+                                                        <UserIcon className="w-4 h-4" />
+                                                        <span>Disable</span>
+                                                    </Link>
+                                                }
+
+                                                {user.lockDiamond ?
+                                                    <Link href={route('admin.user.diamondtogglelock', user.uid)} method="post" as="button" className="flex text-red-500 items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
+                                                        <GiftIcon className="w-4 h-4" />
+                                                        <span>Lock</span>
+                                                    </Link>
+                                                    : <Link href={route('admin.user.diamondtogglelock', user.uid)} method="post" as="button" className="flex  items-center space-x-1 border p-1 rounded-md dark:border-gray-700 text-gray-500">
+                                                        <GiftIcon className="w-4 h-4 text-green-500" />
+                                                        {/* <span>Lock</span> */}
+                                                    </Link>
                                                 }
 
                                                 <Link href={route('admin.user.show', user.uid)} className="border p-1 rounded-md dark:border-gray-700 text-gray-500">
-                                                    <EyeIcon className="w-4 h-4" />
+                                                    <EyeIcon className="w-4 h-4 text-blue-600" />
                                                 </Link>
 
-                                                <Link href="#" className="border p-1 rounded-md dark:border-gray-700 text-green-500">
-                                                    <PencilIcon className="w-4 h-5" />
-                                                </Link>
-                                                <Link href={route('admin.user.deposit', user.uid)} className="border p-1 rounded-md dark:border-gray-700 text-gray-500">
-                                                    <GiftIcon className="w-4 h-4" />
+                                                <Link href={route('admin.user.deposit', user.uid)} className="flex items-center space-x-1 border p-1 rounded-md  dark:border-gray-700 text-green-500">
+                                                    <GiftIcon className="w-4 h-4 text-green-500" />
+                                                    <span>Deposit</span>
                                                 </Link>
 
                                                 {/* <DeleteAlert title="product" href="" /> */}

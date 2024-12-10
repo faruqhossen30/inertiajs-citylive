@@ -25,6 +25,7 @@ import {
     FolderOpenIcon,
     GiftIcon,
     HomeIcon,
+    ListBulletIcon,
     PhotoIcon,
     UserGroupIcon,
     UsersIcon,
@@ -51,6 +52,16 @@ const navigation = [
     { name: 'Avatar', href: route('avatar.index'), icon: PhotoIcon, current: false },
     { name: 'Entry frame', href: route('frame.index'), icon: FolderOpenIcon , current: false },
     { name: 'Gift Animation', href: route('animation.index'), icon: GiftTopIcon, current: false },
+    {
+        name: 'Transction',
+        icon: ListBulletIcon,
+        current: false,
+        children: [
+            { name: 'Today Send', href: route('admin.transction.todaysend') },
+            { name: 'Agent List', href: route('admin.agents') },
+            { name: 'TopUp List', href: route('admin.topups') },
+        ],
+    },
     {
         name: 'Admin',
         icon: UserGroupIcon,

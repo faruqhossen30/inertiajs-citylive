@@ -76,21 +76,98 @@ class UserController extends Controller
     }
 
 
-    public function deposit(string $uid)
-    {
-
-    }
+    public function deposit(string $uid) {}
 
     /**
      * Display the specified resource.
      */
-    public function setAsHost(string $uid)
-    {
-
-    }
+    public function setAsHost(string $uid) {}
 
     public function disableAccount()
     {
         return "disable Account";
     }
+
+    public function toggleDiamondLock($uid)
+    {
+        $firestore =  new FirestoreClient([
+            'projectId' => env('FIREBASE_PROJECT_ID')
+        ]);
+
+        $firebaseUser = $firestore->collection('users')->document($uid);
+
+        $user = $firebaseUser->snapshot()->data();
+
+        $firebaseUser->update([
+            ['path' => 'lockDiamond', 'value' => !$user['lockDiamond']]
+        ]);
+        // return to_route('admin.users');
+        return redirect()->back();
+    }
+
+    public function vipToggle($uid)
+    {
+        $firestore =  new FirestoreClient([
+            'projectId' => env('FIREBASE_PROJECT_ID')
+        ]);
+
+        $firebaseUser = $firestore->collection('users')->document($uid);
+
+        $user = $firebaseUser->snapshot()->data();
+
+        $firebaseUser->update([
+            ['path' => 'vip', 'value' => !$user['vip']]
+        ]);
+        // return to_route('admin.users');
+        return redirect()->back();
+    }
+
+
+    public function vvipToggle($uid)
+    {
+        $firestore =  new FirestoreClient([
+            'projectId' => env('FIREBASE_PROJECT_ID')
+        ]);
+
+        $firebaseUser = $firestore->collection('users')->document($uid);
+
+        $user = $firebaseUser->snapshot()->data();
+
+        $firebaseUser->update([
+            ['path' => 'vvip', 'value' => !$user['vvip']]
+        ]);
+        // return to_route('admin.users');
+        return redirect()->back();
+    }
+
+
+    public function diviceBlockToggle($uid)
+    {
+        $firestore =  new FirestoreClient([
+            'projectId' => env('FIREBASE_PROJECT_ID')
+        ]);
+
+        $firebaseUser = $firestore->collection('users')->document($uid);
+
+        $user = $firebaseUser->snapshot()->data();
+
+        $firebaseUser->update([
+            ['path' => 'deviceBlock', 'value' => !$user['deviceBlock'] ?? false]
+        ]);
+
+        if(!$user['deviceBlock']){
+            $bloc = $firestore->collection('blocks')->document($user['deviceId'])->set([
+                'userRef'=> $firebaseUser,
+                'deviceId'=> $user['deviceId']
+            ]);
+        }else{
+            $bloc = $firestore->collection('blocks')->document($user['deviceId'])->delete();
+        }
+
+
+        // return to_route('admin.users');
+        return to_route('admin.users');
+    }
+
+
 }
