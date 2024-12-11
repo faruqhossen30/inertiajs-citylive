@@ -32,6 +32,51 @@ class GiftController extends Controller
     public function store(Request $request)
     {
 
+        $request->validate(
+            [
+                'name'    => 'required',
+                'category'    => 'required',
+                'diamond' => 'required',
+                // 'img' => 'required|mimes:svga,gif,webp'
+                'img' => 'required'
+            ]
+        );
+
+        $data = [
+            'name' => $request->name,
+            'category' => $request->category,
+            'diamond' => $request->diamond,
+            // 'img'=> $request->img,
+        ];
+
+        if ($request->file('img')) {
+
+            $file = $request->file('img');
+
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $filePath = public_path('svga/');
+
+            // Ensure the directory exists
+            if (!file_exists($filePath)) {
+                mkdir($filePath, 0777, true);
+            }
+
+            // Move the file
+            $file->move($filePath, $fileName);
+
+            $data['img'] = url('/svga').'/'.$fileName;
+        }
+
+
+        $firestore =  new FirestoreClient([
+            'projectId' => env('FIREBASE_PROJECT_ID')
+        ]);
+
+
+        $firebaseUser = $firestore->collection('gifts')->add($data);
+
+
+        return to_route('gifts.index');
     }
 
     /**

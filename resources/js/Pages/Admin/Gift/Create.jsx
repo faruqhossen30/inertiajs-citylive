@@ -8,30 +8,33 @@ import { ErrorMessage, Field, Label } from '@/components/fieldset'
 import { Input } from '@/components/input'
 import SubmitButton from '@/Components/Form/SubmitButton'
 import ThumbnailInput from '@/Components/Form/ThumbnailInput'
+import { Select } from '@/Components/select'
 
 const Create = () => {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
-        photoURL: '',
+        category: 'regular',
         diamond: 0,
-        commission: 0,
+        img: null,
     });
 
-    // function submit(e){
-    //     e.preventDefault()
-    //     post(route('gifts.store'));
-    // }
+    function submit(e) {
+        e.preventDefault()
+        post(route('gifts.store'));
+        // console.log(data);
 
-    const createGift = async ()=>{
-        const docRef = await addDoc(collection(db, "gifts"),{
-            name: data.name,
-            photoURL: data.photoURL,
-            diamond: parseInt(data.diamond),
-            commission: parseInt(data.commission),
-            total: parseInt(data.diamond) + parseInt(data.commission)
-        });
-        return router.visit('gifts.index');
     }
+
+    // const createGift = async () => {
+    //     const docRef = await addDoc(collection(db, "gifts"), {
+    //         name: data.name,
+    //         img: data.img,
+    //         diamond: parseInt(data.diamond),
+    //         commission: parseInt(data.commission),
+    //         total: parseInt(data.diamond) + parseInt(data.commission)
+    //     });
+    //     return router.visit('gifts.index');
+    // }
 
     return (
         <AuthenticatedLayout
@@ -50,7 +53,7 @@ const Create = () => {
                     <div className=" px-2 py-2 sm:px-6 lg:px-4 mx-auto">
                         <form onSubmit={submit}>
                             <Field>
-                                <Label>Full name</Label>
+                                <Label>Name</Label>
                                 <Input
                                     name="name"
                                     value={data.name}
@@ -60,14 +63,26 @@ const Create = () => {
                             </Field>
 
                             <Field>
+                                <Label>Project status</Label>
+                                <Select name="category"  onChange={(e) => setData('category', e.target.value)}>
+                                    <option value="regular">Regular</option>
+                                    <option value="popular">Popular</option>
+                                    <option value="luzury">Luzury</option>
+                                    <option value="event">Event</option>
+                                </Select>
+                                {errors.category && <ErrorMessage>{errors.category}</ErrorMessage>}
+                            </Field>
+
+                            {/* <Field>
                                 <Label>Photo URL</Label>
                                 <Input
-                                    name="photoURL"
-                                    value={data.photoURL}
-                                    onChange={(e) => setData('photoURL', e.target.value)}
+                                    name="svgaURL"
+                                    value={data.img}
+                                    onChange={(e) => setData('svgaURL', e.target.value)}
                                 />
-                                {errors.photoURL && <ErrorMessage>{errors.photoURL}</ErrorMessage>}
-                            </Field>
+                                {errors.svgaURL && <ErrorMessage>{errors.svgaURL}</ErrorMessage>}
+                            </Field> */}
+
 
                             <Field>
                                 <Label>Diamond</Label>
@@ -78,6 +93,16 @@ const Create = () => {
                                     onChange={(e) => setData('diamond', e.target.value)}
                                 />
                                 {errors.diamond && <ErrorMessage>{errors.diamond}</ErrorMessage>}
+                            </Field>
+
+                            <Field>
+                                <Label>Photo URL</Label>
+                                <Input
+                                type="file"
+                                    name="img"
+                                    onChange={(e) => setData('img', e.target.files[0])}
+                                />
+                                {errors.img && <ErrorMessage>{errors.img}</ErrorMessage>}
                             </Field>
 
 
